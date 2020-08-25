@@ -43,6 +43,15 @@ var app = express();
 //   store: new FileStore()
 // }));
 
+app.all('*', (req, res, next) => {
+  if(req.secure){
+    return next();
+  } else {
+    console.log(`Redirecting to: https://${req.hostname}:${app.get('secPort')}${req.url}`);
+    res.redirect(301, `https://${req.hostname}:${app.get('secPort')}${req.url}`);
+  }
+});
+
 app.use(passport.initialize());
 // app.use(passport.session());
 
