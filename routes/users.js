@@ -19,6 +19,8 @@ router.get('/', cors.corsWithOptions, authenticate.verifyUser, authenticate.veri
   }).catch(err => next(err));
 });
 
+
+
 router.post('/signup', cors.corsWithOptions, jsonParser, (req, res) => {
     User.register(
       new User({username: req.body.username}),
@@ -70,8 +72,13 @@ router.get('/logout', cors.corsWithOptions, (req, res, next) => {
     }
 });
 
-router.get('/test'), cors.corsWithOptions, (req, res, next) => {
-  res.end(req.toString());
-}
+router.get('/facebook/token', passport.authenticate('facebook-token'), (req, res) => {
+  if(req.user) {
+    const token = authenticate.getToken({_id: req.user._id});
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.json({success: true, token: token, status: 'you are successfully logged in!'});
+  }
+});
 
 module.exports = router;
